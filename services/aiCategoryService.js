@@ -43,12 +43,16 @@ function generateCategoryData(productName, description) {
     "environment friendly"
   );
 
-  return {
-    category,
-    subCategory,
-    seoTags: [...new Set(seoTags)].slice(0, 10),
-    sustainabilityFilters
-  };
+const confidence = seoTags.length >= 3 ? 0.9 : 0.75;
+
+return {
+  category,
+  subCategory,
+  confidence_score: confidence,
+  reasoning: `Keywords in the product description strongly matched ${category} → ${subCategory}.`,
+  seoTags: [...new Set(seoTags)].slice(0, 10),
+  sustainabilityFilters
+};
 }
 
 module.exports = { generateCategoryData };

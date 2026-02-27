@@ -4,6 +4,9 @@ const app = express();
 // Middleware
 app.use(express.json());
 
+// 👇 ADD THIS LINE
+app.use(express.static("public"));
+
 // Routes
 const productRoutes = require("./routes/productRoutes");
 app.use("/api", productRoutes);
@@ -13,7 +16,6 @@ app.get("/", (req, res) => {
   res.send("🚀 AI Auto-Category & Tag Generator is running");
 });
 
-// Start server
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`✅ Server running on http://localhost:${PORT}`);
