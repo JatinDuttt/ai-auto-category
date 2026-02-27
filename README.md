@@ -165,5 +165,3 @@ Author
 
 Jatin
 AI Systems Assignment – Sustainable Commerce
-
-
