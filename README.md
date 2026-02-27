@@ -163,10 +163,7 @@ Integration with impact reporting modules
 
 Author
 
-Jatin Dutt
+Jatin
 AI Systems Assignment – Sustainable Commerce
 
 
-git add README.md
-git commit -m "Add README documentation"
-git push
