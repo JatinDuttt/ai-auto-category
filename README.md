@@ -1,120 +1,201 @@
-# AI Auto-Category & Tag Generator
+🌿 AI Auto-Category & Tag Generator
+🚀 Overview
 
-## Overview
-This project is an AI-powered backend system with a real-time dashboard that automates product catalog enrichment for sustainable commerce platforms.
+This project is an AI-powered backend system with an interactive real-time dashboard that automates product catalog enrichment for sustainable commerce platforms.
 
-It analyzes product data to:
-- Automatically assign categories and sub-categories
-- Generate SEO-friendly tags
-- Identify sustainability attributes
-- Provide explainable AI outputs with confidence scores
+It intelligently analyzes product data to:
 
-The system is designed to reduce manual catalog work while maintaining transparency, consistency, and auditability.
+Automatically assign primary category & sub-category
 
----
+Generate SEO-optimized tags
 
-## Key Features
-- AI-based **auto category & sub-category assignment**
-- **5–10 SEO tags** generation
-- **Sustainability filters** detection:
-  - plastic-free
-  - compostable
-  - vegan
-  - recycled
-- **Confidence score** for AI decisions
-- **Human-readable AI reasoning**
-- Real-time **interactive UI dashboard**
-- MySQL database persistence
-- AI input/output logging for auditability
-- Sample catalog data seeded for demo/testing
+Detect sustainability attributes
 
----
+Provide explainable AI reasoning
 
-## Tech Stack
-- **Node.js**
-- **Express.js**
-- **MySQL**
-- **HTML, CSS, JavaScript (Vanilla)**
-- Rule-based AI logic (deterministic & explainable)
+Display confidence scoring
 
----
+Store structured AI output in a database
 
-## Project Architecture
+The goal is to reduce manual catalog operations while ensuring transparency, consistency, and auditability.
 
+✨ Key Features
+🧠 AI Intelligence
+
+Auto category & sub-category assignment
+
+5–10 SEO tags generation
+
+Sustainability filter detection:
+
+plastic-free
+
+compostable
+
+vegan
+
+recycled
+
+Explainable reasoning statement
+
+Confidence score calculation
+
+💾 Backend & Data
+
+MySQL database persistence
+
+AI input/output logging
+
+Structured JSON responses
+
+Sample catalog data seeded (50+ demo products)
+
+🎨 Real-Time Interactive UI
+
+Animated loading spinner
+
+Fake AI “thinking” typing effect
+
+Dynamic progress bar
+
+Smooth result reveal
+
+Confidence score animated bar
+
+Clean SaaS-style interface
+
+🛠 Tech Stack
+
+Node.js
+
+Express.js
+
+MySQL
+
+HTML, CSS, Vanilla JavaScript
+
+Rule-based deterministic AI logic
+
+No paid APIs. Fully self-contained system.
+
+🏗 Project Architecture
 ai-auto-category/
 │
 ├── config/
-│ └── db.js # Database connection
+│   └── db.js                # Database connection
 │
 ├── controllers/
-│ └── productController.js # Request handling & orchestration
+│   └── productController.js # Request handling & orchestration
 │
 ├── routes/
-│ └── productRoutes.js # API routes
+│   └── productRoutes.js     # API endpoints
 │
 ├── services/
-│ └── aiCategoryService.js # AI logic (categorization & scoring)
+│   └── aiCategoryService.js # AI categorization logic
 │
 ├── public/
-│ └── index.html # Real-time AI dashboard UI
+│   └── index.html           # Real-time interactive dashboard
 │
-├── database.sql # Database schema + seed data
-├── server.js # Application entry point
+├── database.sql             # Schema + seed data
+├── server.js                # Entry point
 ├── package.json
 ├── .gitignore
 ├── .env.example
 └── README.md
+🧠 AI Design Approach
 
+This system uses rule-based explainable AI instead of a large language model.
 
----
+Why?
 
-## AI Design Approach
-This project uses **rule-based AI** instead of a large language model to ensure:
+Deterministic outputs
 
-- Explainability of decisions
-- Deterministic and consistent outputs
-- Zero dependency on paid APIs
-- Easy auditing and debugging
+Full explainability
 
-The AI analyzes product names and descriptions using keyword-based reasoning to infer:
-- Category
-- Sub-category
-- SEO tags
-- Sustainability attributes
+No API dependency
 
-Each AI response includes:
-- A **confidence score**
-- A **reasoning statement** explaining why the decision was made
+Easy debugging
 
----
+Production-safe logic
 
-## Interactive Dashboard (UI)
-The project includes a real-time dashboard that allows users to:
-- Enter product name and description
-- Trigger AI analysis
-- View results instantly with animations and loading states
+AI Logic Flow
 
-### UI Output Includes:
-- Category & Sub-category
-- Confidence score (%)
-- AI reasoning
-- SEO tags
-- Sustainability filters
+Extract keywords from product name & description
 
-Access the dashboard at:
+Match against predefined category clusters
 
-http://localhost:3000/index.html
+Generate SEO tags based on matched intent
 
+Detect sustainability attributes
 
----
+Calculate confidence score based on keyword match strength
 
-## API Endpoint
+Generate human-readable reasoning
 
-### Analyze Product
-**POST** `/api/products`
+📊 Confidence Score Logic
 
-#### Request Body
-```json
+Confidence is calculated based on:
+
+Keyword density
+
+Category match strength
+
+Sustainability signals detected
+
+Description completeness
+
+Example output:
+
+{
+  "confidence_score": 0.91,
+  "reasoning": "Multiple sustainability keywords strongly matched the Kitchen & Storage category."
+}
+
+The UI visually represents confidence using an animated progress bar.
+
+🎨 Interactive Dashboard
+
+Access at:
+
+http://localhost:3000
+UI Workflow:
+
+Enter product name
+
+Enter product description
+
+Click "Analyze Product"
+
+AI simulation begins:
+
+Spinner animation
+
+Progress bar
+
+Typing effect (“Analyzing description…”)
+
+Final output appears with smooth animation
+
+Output Includes:
+
+Category
+
+Sub-category
+
+SEO tags
+
+Sustainability filters
+
+Confidence score (animated)
+
+AI reasoning
+
+🔌 API Endpoint
+Analyze Product
+
+POST /api/analyze
+
+Request Body
 {
   "product_name": "Bamboo Water Bottle",
   "description": "Plastic free reusable bamboo bottle for daily hydration"
@@ -123,85 +204,104 @@ Response
 {
   "message": "Product analyzed & stored successfully",
   "product_id": 1,
-  "ai_output": {
-    "category": "Kitchen & Storage",
-    "subCategory": "Bottles & Containers",
-    "confidence_score": 0.9,
-    "reasoning": "Keywords in the product description strongly matched Kitchen & Storage → Bottles & Containers.",
-    "seoTags": [
-      "eco bottle",
-      "reusable bottle",
-      "water bottle",
-      "sustainable product",
-      "green living"
-    ],
-    "sustainabilityFilters": [
-      "plastic-free",
-      "compostable"
-    ]
-  }
+  "category": "Kitchen & Storage",
+  "subCategory": "Bottles & Containers",
+  "tags": [
+    "eco bottle",
+    "reusable bottle",
+    "sustainable hydration",
+    "green living"
+  ],
+  "confidence_score": 0.91
 }
-Database Design
+🗄 Database Design
+Tables
+1️⃣ products
 
-The system uses MySQL with the following tables:
+Stores AI-analyzed product data
 
-products – Stores AI-analyzed product data
+2️⃣ ai_logs
 
-ai_logs – Stores AI inputs and outputs for traceability
+Stores AI input/output for traceability
 
-sample_products – Preloaded catalog data for demo and testing
+3️⃣ sample_products
 
-Sample catalog data is seeded to simulate a real-world onboarding workflow.
+Pre-seeded demo catalog (50+ products across domains)
 
-Setup Instructions
-1. Clone Repository
+Domains covered:
+
+Bamboo products
+
+Solar & renewable
+
+Compostable packaging
+
+Eco personal care
+
+Sustainable stationery
+
+Green cleaning
+
+Gardening & water conservation
+
+⚙ Setup Instructions
+1️⃣ Clone Repository
 git clone https://github.com/JatinDuttt/ai-auto-category.git
 cd ai-auto-category
-2. Install Dependencies
+2️⃣ Install Dependencies
 npm install
-3. Environment Configuration
+3️⃣ Environment Configuration
 
-Create a .env file using .env.example
+Create .env file using .env.example
 
-4. Database Setup
+4️⃣ Database Setup
 
-Run the SQL script in database.sql using MySQL Workbench or any MySQL client.
+Run database.sql using MySQL Workbench.
 
-5. Start Server
+5️⃣ Start Server
 npm start
 
-Server runs on:
+Server runs at:
 
 http://localhost:3000
-Assignment Alignment
+🎯 Assignment Alignment
 
-This project satisfies the following requirements:
+This project demonstrates:
 
 Structured AI outputs
 
-Explainable AI logic
+Explainable reasoning
 
-Clean separation of concerns
+Clean backend architecture
+
+Separation of concerns
 
 Database persistence
 
-Sustainability-focused reasoning
+Sustainability-driven classification
 
-Real-time user interaction
+Interactive user experience
 
-Production-ready backend architecture
+Confidence scoring mechanism
 
-Future Enhancements
+Production-style API design
 
-Batch AI processing for bulk catalogs
+🔮 Future Enhancements
 
-LLM-based NLP integration
+Bulk catalog AI processing
 
-Admin feedback loop for AI learning
+Admin review + feedback loop
 
-Impact reporting module (carbon & plastic savings)
+Hybrid LLM + rule-based system
 
-Author
+Real ESG impact scoring
+
+Advanced NLP keyword clustering
+
+Deployment with Docker
+
+👨‍💻 Author
 
 Jatin 
 Applied AI Systems – Sustainable Commerce
+Built as part of an AI systems engineering assignment
