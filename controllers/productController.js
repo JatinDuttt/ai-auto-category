@@ -56,12 +56,22 @@ exports.createProduct = (req, res) => {
         }
       );
 
-      // Final response
+      
+
+      
       res.status(201).json({
+      
         message: "✅ Product analyzed & stored successfully",
+      
         product_id: result.insertId,
+      
         ai_output: aiResult
+      
       });
+   
     }
+
+  
   );
+
 };
