@@ -2,226 +2,1078 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Auto-Category Generator</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<title>AI Catalog Console</title>
 <style>
-body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #2ecc71, #27ae60);
-  margin: 0;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+  :root {
+    --bg: #edf3fb;
+    --bg-deep: #dfe8f5;
+    --sidebar: #0f172a;
+    --sidebar-soft: #162138;
+    --panel: rgba(255, 255, 255, 0.86);
+    --panel-strong: #ffffff;
+    --text: #172033;
+    --text-soft: #62708a;
+    --line: rgba(23, 32, 51, 0.1);
+    --line-strong: rgba(23, 32, 51, 0.18);
+    --primary: #2563eb;
+    --primary-soft: #e8f0ff;
+    --accent: #0f766e;
+    --accent-soft: #e7faf7;
+    --warning: #f59e0b;
+    --danger: #dc2626;
+    --shadow: 0 20px 45px rgba(31, 41, 55, 0.12);
+    --radius-xl: 30px;
+    --radius-lg: 22px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+  }
 
-.container {
-  background: #fff;
-  padding: 30px;
-  width: 420px;
-  border-radius: 12px;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-}
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-h2 { text-align: center; }
+  body {
+    min-height: 100vh;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    color: var(--text);
+    background:
+      radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 20%),
+      radial-gradient(circle at bottom right, rgba(15, 118, 110, 0.08), transparent 18%),
+      linear-gradient(180deg, #f4f8fd 0%, var(--bg) 100%);
+    padding: 18px;
+  }
 
-input, textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
+  .app-shell {
+    max-width: 1320px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 18px;
+  }
 
-button {
-  width: 100%;
-  padding: 12px;
-  margin-top: 15px;
-  border: none;
-  border-radius: 6px;
-  background: #27ae60;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-}
+  .sidebar {
+    padding: 22px;
+    border-radius: var(--radius-xl);
+    background: linear-gradient(180deg, var(--sidebar) 0%, var(--sidebar-soft) 100%);
+    color: #d7e3fb;
+    box-shadow: var(--shadow);
+    display: grid;
+    gap: 22px;
+    align-content: start;
+  }
 
-button:disabled {
-  opacity: 0.6;
-}
+  .brand small,
+  .panel-label,
+  .sidebar-note span,
+  .sidebar-list span,
+  .counter span,
+  .meta,
+  .label-note,
+  .result-label,
+  .empty-note {
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.73rem;
+    font-weight: 700;
+  }
 
-.spinner {
-  display: none;
-  margin: 15px auto;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #27ae60;
-  border-radius: 50%;
-  width: 35px;
-  height: 35px;
-  animation: spin 1s linear infinite;
-}
+  .brand small {
+    color: #7dd3fc;
+  }
 
-@keyframes spin {
-  100% { transform: rotate(360deg); }
-}
+  .brand h1 {
+    margin-top: 8px;
+    font-size: 1.85rem;
+    line-height: 1;
+  }
 
-.progress-bar {
-  width: 100%;
-  background: #eee;
-  border-radius: 6px;
-  margin-top: 10px;
-  overflow: hidden;
-  display: none;
-}
+  .brand p {
+    margin-top: 10px;
+    color: #97a8c7;
+    line-height: 1.7;
+    font-size: 0.92rem;
+  }
 
-.progress {
-  height: 10px;
-  width: 0%;
-  background: #27ae60;
-  transition: width 0.3s;
-}
+  .sidebar-block {
+    padding: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-lg);
+    background: rgba(255, 255, 255, 0.04);
+  }
 
-.result {
-  margin-top: 20px;
-  background: #ecf9f1;
-  padding: 15px;
-  border-radius: 6px;
-  display: none;
-}
+  .panel-label {
+    color: #8fb7ff;
+    margin-bottom: 12px;
+  }
 
-.confidence-bar {
-  background: #ddd;
-  border-radius: 6px;
-  margin-top: 8px;
-  overflow: hidden;
-}
+  .sidebar-list {
+    display: grid;
+    gap: 12px;
+  }
 
-.confidence-fill {
-  height: 8px;
-  width: 0%;
-  background: #2ecc71;
-  transition: width 1s ease-in-out;
-}
+  .sidebar-list li {
+    list-style: none;
+  }
 
-.ai-text {
-  font-style: italic;
-  margin-top: 10px;
-  color: #555;
-}
+  .sidebar-list strong,
+  .sidebar-note strong {
+    display: block;
+    color: #eff5ff;
+    margin-bottom: 4px;
+    font-size: 0.95rem;
+  }
+
+  .sidebar-list p,
+  .sidebar-note p {
+    color: #9db0cf;
+    line-height: 1.6;
+    font-size: 0.88rem;
+  }
+
+  .sidebar-note span {
+    color: #86efac;
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+
+  .main {
+    display: grid;
+    gap: 18px;
+  }
+
+  .hero {
+    padding: 26px;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--line);
+    background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(255,255,255,0.76));
+    box-shadow: var(--shadow);
+  }
+
+  .hero-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 18px;
+  }
+
+  .hero-copy h2 {
+    max-width: 11ch;
+    font-size: clamp(2.1rem, 4vw, 3.8rem);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+  }
+
+  .hero-copy p {
+    max-width: 50rem;
+    margin-top: 12px;
+    color: var(--text-soft);
+    line-height: 1.75;
+  }
+
+  .hero-badge {
+    padding: 11px 14px;
+    border-radius: 999px;
+    background: var(--primary-soft);
+    color: var(--primary);
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 22px;
+  }
+
+  .counter {
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.72);
+  }
+
+  .counter span {
+    color: var(--text-soft);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .counter strong {
+    font-size: 0.98rem;
+    line-height: 1.5;
+  }
+
+  .workspace {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+    gap: 18px;
+  }
+
+  .panel {
+    border: 1px solid var(--line);
+    border-radius: var(--radius-xl);
+    background: linear-gradient(180deg, rgba(255,255,255,0.84), rgba(255,255,255,0.7));
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .panel-head {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    gap: 12px;
+    background: rgba(255,255,255,0.68);
+  }
+
+  .panel-head h3 {
+    font-size: 1.05rem;
+    margin-bottom: 4px;
+  }
+
+  .panel-head p {
+    color: var(--text-soft);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .panel-body {
+    padding: 22px;
+    display: grid;
+    gap: 18px;
+  }
+
+  .sample-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .sample-card {
+    padding: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: var(--panel-strong);
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .sample-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(37, 99, 235, 0.3);
+    box-shadow: 0 12px 24px rgba(37, 99, 235, 0.08);
+  }
+
+  .sample-card strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.94rem;
+  }
+
+  .sample-card span {
+    color: var(--text-soft);
+    font-size: 0.84rem;
+    line-height: 1.55;
+  }
+
+  .form-grid {
+    display: grid;
+    gap: 14px;
+  }
+
+  .field {
+    display: grid;
+    gap: 8px;
+  }
+
+  .field-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .field-top label {
+    font-size: 0.94rem;
+    font-weight: 700;
+  }
+
+  .meta {
+    color: var(--text-soft);
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 14px 15px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: rgba(255,255,255,0.92);
+    color: var(--text);
+    font: inherit;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  input:focus,
+  textarea:focus {
+    border-color: rgba(37, 99, 235, 0.35);
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.09);
+  }
+
+  textarea {
+    min-height: 130px;
+    resize: vertical;
+  }
+
+  .signal-row,
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .signal-pill,
+  .tag-pill {
+    padding: 9px 12px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .signal-pill {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .signal-pill.empty {
+    background: #f2f5fb;
+    color: var(--text-soft);
+    border: 1px solid var(--line);
+  }
+
+  .tag-pill {
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+
+  .button-row {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    border: none;
+    font: inherit;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+
+  button:hover {
+    transform: translateY(-1px);
+  }
+
+  button:disabled {
+    opacity: 0.66;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .primary-btn,
+  .secondary-btn,
+  .copy-btn {
+    min-height: 46px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-weight: 700;
+  }
+
+  .primary-btn {
+    flex: 1;
+    min-width: 180px;
+    background: linear-gradient(135deg, var(--primary), #3b82f6);
+    color: white;
+  }
+
+  .secondary-btn {
+    background: #f7f9fd;
+    color: var(--text);
+    border: 1px solid var(--line-strong);
+  }
+
+  .copy-btn {
+    background: var(--primary-soft);
+    color: var(--primary);
+  }
+
+  .status-stack {
+    display: grid;
+    gap: 12px;
+  }
+
+  .progress-shell {
+    display: none;
+    width: 100%;
+    height: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #dfe7f2;
+  }
+
+  .progress-bar {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), #60a5fa);
+    transition: width 0.25s ease;
+  }
+
+  .thinking-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 32px;
+  }
+
+  .spinner {
+    display: none;
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(37, 99, 235, 0.16);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.85s linear infinite;
+  }
+
+  .thinking-text {
+    color: var(--primary);
+    font-size: 0.9rem;
+  }
+
+  .thinking-text.error {
+    color: var(--danger);
+  }
+
+  .thinking-text.success {
+    color: var(--accent);
+  }
+
+  .rail {
+    display: grid;
+    gap: 18px;
+  }
+
+  .result-grid,
+  .history-list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .result-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .result-card,
+  .metric-card,
+  .history-card {
+    padding: 15px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    background: rgba(255,255,255,0.9);
+  }
+
+  .result-label {
+    color: var(--text-soft);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .metric-card strong,
+  .result-card strong {
+    font-size: 1rem;
+    line-height: 1.45;
+  }
+
+  .confidence-shell {
+    margin-top: 10px;
+    height: 10px;
+    background: #dfe7f2;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .confidence-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--warning), var(--accent));
+    transition: width 0.9s ease;
+  }
+
+  .reasoning {
+    color: var(--text-soft);
+    line-height: 1.7;
+  }
+
+  .history-card {
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .history-card:hover {
+    transform: translateY(-1px);
+    border-color: rgba(15, 118, 110, 0.26);
+  }
+
+  .history-card strong {
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .history-card span {
+    display: block;
+    color: var(--text-soft);
+    font-size: 0.84rem;
+    line-height: 1.55;
+  }
+
+  .empty-note {
+    color: var(--text-soft);
+    line-height: 1.7;
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @media (max-width: 1120px) {
+    .app-shell,
+    .workspace,
+    .hero-grid,
+    .sample-grid,
+    .result-summary {
+      grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+      order: 2;
+    }
+  }
+
+  @media (max-width: 720px) {
+    body {
+      padding: 12px;
+    }
+
+    .hero-top,
+    .panel-head,
+    .field-top {
+      grid-template-columns: 1fr;
+      display: grid;
+    }
+
+    .button-row {
+      flex-direction: column;
+    }
+
+    .hero-copy h2 {
+      max-width: none;
+      font-size: clamp(2rem, 12vw, 3rem);
+    }
+  }
 </style>
 </head>
 <body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <small>AI Catalog Console</small>
+        <h1>Workspace</h1>
+        <p>
+          A product-style console for testing explainable category logic, not a portfolio landing page.
+        </p>
+      </div>
 
-<div class="container">
-  <h2>🌿 AI Product Analyzer</h2>
+      <div class="sidebar-block">
+        <div class="panel-label">Workflow</div>
+        <ul class="sidebar-list">
+          <li>
+            <span>Step 01</span>
+            <strong>Load Inputs</strong>
+            <p>Fill the product title and description or use a quick sample.</p>
+          </li>
+          <li>
+            <span>Step 02</span>
+            <strong>Preview Signals</strong>
+            <p>See sustainability keywords update live before sending the request.</p>
+          </li>
+          <li>
+            <span>Step 03</span>
+            <strong>Review Output</strong>
+            <p>Inspect category, tags, reasoning, and confidence in structured cards.</p>
+          </li>
+        </ul>
+      </div>
 
-  <form id="productForm">
-    <input type="text" id="product_name" placeholder="Enter product name" required>
-    <textarea id="description" rows="4" placeholder="Enter description" required></textarea>
-    <button type="submit">Analyze Product</button>
-  </form>
+      <div class="sidebar-block sidebar-note">
+        <span>Why this UI</span>
+        <strong>Different from the portfolio</strong>
+        <p>
+          This design uses a console-style sidebar, bright workspace panels, and a product-tool layout so it feels like
+          an application dashboard instead of a personal site.
+        </p>
+      </div>
+    </aside>
 
-  <div class="spinner" id="spinner"></div>
+    <main class="main">
+      <section class="hero">
+        <div class="hero-top">
+          <div class="hero-copy">
+            <h2>Analyze catalog text in a cleaner product console.</h2>
+            <p>
+              Use this workspace to simulate an AI-assisted categorization flow for sustainable commerce products,
+              complete with live feedback, recent runs, and explainable structured outputs.
+            </p>
+          </div>
+          <div class="hero-badge">Ready for demo</div>
+        </div>
 
-  <div class="progress-bar" id="progressBar">
-    <div class="progress" id="progress"></div>
+        <div class="hero-grid">
+          <div class="counter">
+            <span>Interface Style</span>
+            <strong>App dashboard with a workspace and a result rail</strong>
+          </div>
+          <div class="counter">
+            <span>Core Behavior</span>
+            <strong>Live signals, sample autofill, progress states, and history</strong>
+          </div>
+          <div class="counter">
+            <span>Use Case</span>
+            <strong>Structured product enrichment for eco-focused commerce catalogs</strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Analysis Input</h3>
+              <p>Prepare product text, preview signals, and run the backend workflow.</p>
+            </div>
+          </div>
+
+          <div class="panel-body">
+            <div>
+              <div class="field-top" style="margin-bottom: 12px;">
+                <div class="label-note">Quick Samples</div>
+                <div class="meta">Tap to autofill</div>
+              </div>
+              <div class="sample-grid" id="sampleList"></div>
+            </div>
+
+            <form id="productForm" class="form-grid">
+              <div class="field">
+                <div class="field-top">
+                  <label for="product_name">Product Name</label>
+                  <div class="meta" id="nameCount">0 characters</div>
+                </div>
+                <input type="text" id="product_name" placeholder="Example: Bamboo Water Bottle" required>
+              </div>
+
+              <div class="field">
+                <div class="field-top">
+                  <label for="description">Description</label>
+                  <div class="meta" id="descCount">0 words</div>
+                </div>
+                <textarea id="description" placeholder="Describe product material, sustainability value, and usage details..." required></textarea>
+              </div>
+
+              <div class="field">
+                <div class="field-top">
+                  <label>Sustainability Signals</label>
+                  <div class="meta">Live preview</div>
+                </div>
+                <div class="signal-row" id="keywordList">
+                  <div class="signal-pill empty">No sustainability keywords detected yet</div>
+                </div>
+              </div>
+
+              <div class="button-row">
+                <button type="submit" class="primary-btn" id="submitBtn">Run Analysis</button>
+                <button type="button" class="secondary-btn" id="resetBtn">Reset Form</button>
+              </div>
+            </form>
+
+            <div class="status-stack">
+              <div class="progress-shell" id="progressWrap">
+                <div class="progress-bar" id="progress"></div>
+              </div>
+              <div class="thinking-row">
+                <div class="spinner" id="spinner"></div>
+                <div class="thinking-text" id="aiThinking"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="rail">
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Latest Output</h3>
+                <p>Structured AI result from the most recent run.</p>
+              </div>
+              <button type="button" class="copy-btn" id="copyBtn">Copy JSON</button>
+            </div>
+            <div class="panel-body">
+              <div class="result-grid" id="resultBox">
+                <p class="empty-note">Run an analysis to see category, reasoning, filters, and confidence here.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <h3>Recent Runs</h3>
+                <p>Stored locally in the browser for a more tool-like workflow.</p>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="history-list" id="historyList">
+                <p class="empty-note">No recent analyses yet.</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
   </div>
-
-  <div class="ai-text" id="aiThinking"></div>
-
-  <div class="result" id="resultBox">
-    <p><strong>Category:</strong> <span id="category"></span></p>
-    <p><strong>Tags:</strong> <span id="tags"></span></p>
-
-    <p><strong>Confidence Score:</strong> <span id="confidenceText"></span></p>
-    <div class="confidence-bar">
-      <div class="confidence-fill" id="confidenceFill"></div>
-    </div>
-  </div>
-</div>
 
 <script>
-const form = document.getElementById("productForm");
-const spinner = document.getElementById("spinner");
-const progressBar = document.getElementById("progressBar");
-const progress = document.getElementById("progress");
-const aiThinking = document.getElementById("aiThinking");
-const resultBox = document.getElementById("resultBox");
-
-form.addEventListener("submit", async function(e){
-  e.preventDefault();
-
-  const product_name = document.getElementById("product_name").value;
-  const description = document.getElementById("description").value;
-
-  // Reset UI
-  resultBox.style.display = "none";
-  spinner.style.display = "block";
-  progressBar.style.display = "block";
-  progress.style.width = "0%";
-  aiThinking.textContent = "";
-  form.querySelector("button").disabled = true;
-
-  // Fake progress animation
-  let width = 0;
-  const progressInterval = setInterval(()=>{
-    if(width >= 90) return;
-    width += 10;
-    progress.style.width = width + "%";
-  }, 300);
-
-  // Fake AI typing
-  const messages = [
-    "Analyzing product description...",
-    "Classifying category...",
-    "Generating SEO tags...",
-    "Calculating confidence score..."
+  const SAMPLE_PRODUCTS = [
+    {
+      product_name: "Bamboo Water Bottle",
+      description: "Plastic free reusable bamboo bottle for daily hydration and eco friendly travel."
+    },
+    {
+      product_name: "Herbal Vegan Soap Bar",
+      description: "Natural vegan soap with gentle ingredients, chemical free care, and plastic free packaging."
+    },
+    {
+      product_name: "Recycled Grocery Bag",
+      description: "Reusable shopping bag made with recycled fabric for sustainable everyday use."
+    }
   ];
 
-  let msgIndex = 0;
-  const typingInterval = setInterval(()=>{
-    if(msgIndex < messages.length){
-      aiThinking.textContent = messages[msgIndex];
-      msgIndex++;
+  const SIGNAL_KEYWORDS = ["plastic free", "bamboo", "vegan", "recycled", "compostable", "reusable", "organic"];
+  const HISTORY_KEY = "ai-auto-category-history";
+
+  const form = document.getElementById("productForm");
+  const productNameInput = document.getElementById("product_name");
+  const descriptionInput = document.getElementById("description");
+  const submitBtn = document.getElementById("submitBtn");
+  const resetBtn = document.getElementById("resetBtn");
+  const sampleList = document.getElementById("sampleList");
+  const spinner = document.getElementById("spinner");
+  const progressWrap = document.getElementById("progressWrap");
+  const progress = document.getElementById("progress");
+  const aiThinking = document.getElementById("aiThinking");
+  const resultBox = document.getElementById("resultBox");
+  const keywordList = document.getElementById("keywordList");
+  const historyList = document.getElementById("historyList");
+  const copyBtn = document.getElementById("copyBtn");
+  const nameCount = document.getElementById("nameCount");
+  const descCount = document.getElementById("descCount");
+
+  let latestResult = null;
+
+  function updateCounters() {
+    nameCount.textContent = productNameInput.value.trim().length + " characters";
+    const words = descriptionInput.value.trim() ? descriptionInput.value.trim().split(/\s+/).length : 0;
+    descCount.textContent = words + " words";
+  }
+
+  function renderKeywordSignals() {
+    const text = (productNameInput.value + " " + descriptionInput.value).toLowerCase();
+    const matched = SIGNAL_KEYWORDS.filter((keyword) => text.includes(keyword));
+
+    if (!matched.length) {
+      keywordList.innerHTML = '<div class="signal-pill empty">No sustainability keywords detected yet</div>';
+      return;
     }
-  }, 700);
 
-  // Artificial delay
-  await new Promise(resolve => setTimeout(resolve, 3000));
+    keywordList.innerHTML = matched
+      .map((keyword) => '<div class="signal-pill">' + keyword + "</div>")
+      .join("");
+  }
 
-  try {
-    const response = await fetch("/api/analyze", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({ product_name, description })
+  function renderSamples() {
+    sampleList.innerHTML = SAMPLE_PRODUCTS.map((sample, index) => (
+      '<button type="button" class="sample-card" data-index="' + index + '">' +
+        "<strong>" + sample.product_name + "</strong>" +
+        "<span>" + sample.description + "</span>" +
+      "</button>"
+    )).join("");
+
+    sampleList.querySelectorAll(".sample-card").forEach((button) => {
+      button.addEventListener("click", () => {
+        const sample = SAMPLE_PRODUCTS[Number(button.dataset.index)];
+        productNameInput.value = sample.product_name;
+        descriptionInput.value = sample.description;
+        updateCounters();
+        renderKeywordSignals();
+      });
+    });
+  }
+
+  function getHistory() {
+    try {
+      return JSON.parse(localStorage.getItem(HISTORY_KEY) || "[]");
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function saveToHistory(entry) {
+    const current = getHistory();
+    const next = [entry, ...current].slice(0, 5);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(next));
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const history = getHistory();
+
+    if (!history.length) {
+      historyList.innerHTML = '<p class="empty-note">No recent analyses yet.</p>';
+      return;
+    }
+
+    historyList.innerHTML = history.map((item, index) => (
+      '<div class="history-card" data-index="' + index + '">' +
+        "<strong>" + item.product_name + "</strong>" +
+        "<span>" + item.category + " -> " + item.subCategory + "</span>" +
+        "<span>Confidence: " + item.confidenceText + "</span>" +
+      "</div>"
+    )).join("");
+
+    historyList.querySelectorAll(".history-card").forEach((item) => {
+      item.addEventListener("click", () => {
+        const selected = history[Number(item.dataset.index)];
+        productNameInput.value = selected.product_name;
+        descriptionInput.value = selected.description;
+        updateCounters();
+        renderKeywordSignals();
+        renderResult(selected, false);
+      });
+    });
+  }
+
+  function renderResult(data, persist = true) {
+    latestResult = data;
+
+    resultBox.innerHTML =
+      '<div class="result-summary">' +
+        '<div class="metric-card"><span class="result-label">Category</span><strong>' + data.category + "</strong></div>" +
+        '<div class="metric-card"><span class="result-label">Sub-category</span><strong>' + data.subCategory + "</strong></div>" +
+      "</div>" +
+      '<div class="result-card"><span class="result-label">SEO Tags</span><div class="tag-row">' +
+        data.seoTags.map((tag) => '<div class="tag-pill">' + tag + "</div>").join("") +
+      "</div></div>" +
+      '<div class="result-card"><span class="result-label">Sustainability Filters</span><div class="signal-row">' +
+        data.sustainabilityFilters.map((item) => '<div class="signal-pill">' + item + "</div>").join("") +
+      "</div></div>" +
+      '<div class="result-card">' +
+        '<span class="result-label">Confidence Score</span>' +
+        "<strong>" + data.confidenceText + "</strong>" +
+        '<div class="confidence-shell"><div class="confidence-fill" id="confidenceFill"></div></div>' +
+      "</div>" +
+      '<div class="result-card"><span class="result-label">AI Reasoning</span><div class="reasoning">' + data.reasoning + "</div></div>";
+
+    requestAnimationFrame(() => {
+      const fill = document.getElementById("confidenceFill");
+      if (fill) {
+        fill.style.width = typeof data.confidence_score === "number" ? data.confidenceText : "0%";
+      }
     });
 
-    const data = await response.json();
-
-    clearInterval(progressInterval);
-    clearInterval(typingInterval);
-
-    progress.style.width = "100%";
-    spinner.style.display = "none";
-    aiThinking.textContent = "AI analysis complete ✅";
-
-    document.getElementById("category").textContent = data.category;
-    document.getElementById("tags").textContent = data.tags.join(", ");
-
-    // Confidence animation
-    const confidence = Math.floor(Math.random() * 15) + 85; // 85-99%
-    document.getElementById("confidenceText").textContent = confidence + "%";
-    document.getElementById("confidenceFill").style.width = confidence + "%";
-
-    resultBox.style.display = "block";
-
-  } catch(error){
-    aiThinking.textContent = "❌ Error analyzing product";
-  } finally {
-    form.querySelector("button").disabled = false;
+    if (persist) {
+      saveToHistory(data);
+    }
   }
-});
-</script>
 
+  function normalizeAiResponse(payload, product_name, description) {
+    const source = payload.ai_output || payload || {};
+    const seoTags = Array.isArray(source.seoTags)
+      ? source.seoTags
+      : Array.isArray(source.tags)
+        ? source.tags
+        : [];
+    const sustainabilityFilters = Array.isArray(source.sustainabilityFilters)
+      ? source.sustainabilityFilters
+      : seoTags.length
+        ? ["eco-friendly"]
+        : [];
+    const confidenceScore =
+      typeof source.confidence_score === "number"
+        ? source.confidence_score
+        : typeof payload.confidence_score === "number"
+          ? payload.confidence_score
+          : seoTags.length
+            ? 0.75
+            : null;
+
+    return {
+      product_name,
+      description,
+      category: source.category || payload.category || "Uncategorized",
+      subCategory: source.subCategory || payload.subCategory || "General",
+      seoTags,
+      sustainabilityFilters,
+      confidence_score: confidenceScore,
+      confidenceText: confidenceScore === null ? "Not available" : Math.round(confidenceScore * 100) + "%",
+      reasoning:
+        source.reasoning ||
+        payload.reasoning ||
+        "The server returned a partial response, so this result is shown with fallback values."
+    };
+  }
+
+  function resetUI() {
+    form.reset();
+    latestResult = null;
+    updateCounters();
+    renderKeywordSignals();
+    aiThinking.textContent = "";
+    aiThinking.className = "thinking-text";
+    progress.style.width = "0%";
+    progressWrap.style.display = "none";
+    spinner.style.display = "none";
+    resultBox.innerHTML = '<p class="empty-note">Run an analysis to see category, reasoning, filters, and confidence here.</p>';
+  }
+
+  productNameInput.addEventListener("input", () => {
+    updateCounters();
+    renderKeywordSignals();
+  });
+
+  descriptionInput.addEventListener("input", () => {
+    updateCounters();
+    renderKeywordSignals();
+  });
+
+  resetBtn.addEventListener("click", resetUI);
+
+  copyBtn.addEventListener("click", async () => {
+    if (!latestResult) {
+      aiThinking.textContent = "Run an analysis first to copy the result.";
+      aiThinking.className = "thinking-text error";
+      return;
+    }
+
+    await navigator.clipboard.writeText(JSON.stringify(latestResult, null, 2));
+    aiThinking.textContent = "Result copied to clipboard.";
+    aiThinking.className = "thinking-text success";
+  });
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const product_name = productNameInput.value.trim();
+    const description = descriptionInput.value.trim();
+
+    if (!product_name || !description) {
+      aiThinking.textContent = "Please fill in both fields.";
+      aiThinking.className = "thinking-text error";
+      return;
+    }
+
+    submitBtn.disabled = true;
+    spinner.style.display = "block";
+    progressWrap.style.display = "block";
+    progress.style.width = "0%";
+    aiThinking.className = "thinking-text";
+    resultBox.innerHTML = '<p class="empty-note">Analysis is running...</p>';
+
+    const steps = [
+      "Reading product text...",
+      "Matching category patterns...",
+      "Generating structured tags...",
+      "Preparing explainable output..."
+    ];
+
+    let progressValue = 0;
+    let messageIndex = 0;
+
+    aiThinking.textContent = steps[0];
+
+    const progressTimer = setInterval(() => {
+      if (progressValue < 90) {
+        progressValue += 10;
+        progress.style.width = progressValue + "%";
+      }
+    }, 250);
+
+    const messageTimer = setInterval(() => {
+      messageIndex = (messageIndex + 1) % steps.length;
+      aiThinking.textContent = steps[messageIndex];
+    }, 700);
+
+    try {
+      const response = await fetch("/api/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ product_name, description })
+      });
+
+      const payload = await response.json();
+
+      if (!response.ok) {
+        throw new Error(payload.error || "Unable to analyze product.");
+      }
+
+      const normalized = normalizeAiResponse(payload, product_name, description);
+
+      clearInterval(progressTimer);
+      clearInterval(messageTimer);
+
+      progress.style.width = "100%";
+      spinner.style.display = "none";
+      aiThinking.textContent = payload.message || "Analysis complete.";
+      aiThinking.className = "thinking-text success";
+
+      renderResult(normalized);
+    } catch (error) {
+      clearInterval(progressTimer);
+      clearInterval(messageTimer);
+      spinner.style.display = "none";
+      progressWrap.style.display = "none";
+      aiThinking.textContent = error.message;
+      aiThinking.className = "thinking-text error";
+      resultBox.innerHTML = '<p class="empty-note">No result to show because the request failed.</p>';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+
+  renderSamples();
+  renderHistory();
+  updateCounters();
+  renderKeywordSignals();
+</script>
 </body>
 </html>

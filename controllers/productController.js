@@ -60,7 +60,13 @@ exports.createProduct = (req, res) => {
       res.status(201).json({
         message: "✅ Product analyzed & stored successfully",
         product_id: result.insertId,
-        ai_output: aiResult
+        ai_output: aiResult,
+        category: aiResult.category,
+        subCategory: aiResult.subCategory,
+        seoTags: aiResult.seoTags,
+        sustainabilityFilters: aiResult.sustainabilityFilters,
+        confidence_score: aiResult.confidence_score,
+        reasoning: aiResult.reasoning
       });
     }
   );
